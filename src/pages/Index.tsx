@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { RecipeDetail } from '@/components/RecipeDetail';
+import { FavoritesPage } from '@/components/FavoritesPage';
 import { useToast } from '@/hooks/use-toast';
 
 interface Recipe {
@@ -143,6 +144,7 @@ const Index = () => {
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>(SAMPLE_RECIPES);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [showFavorites, setShowFavorites] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -228,6 +230,18 @@ const Index = () => {
     );
   }
 
+  if (showFavorites) {
+    return (
+      <FavoritesPage
+        recipes={recipes}
+        favorites={favorites}
+        onBack={() => setShowFavorites(false)}
+        onRecipeSelect={setSelectedRecipe}
+        onToggleFavorite={toggleFavorite}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-green-50">
       {/* Header */}
@@ -236,6 +250,19 @@ const Index = () => {
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-gray-900">Recipe Book</h1>
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFavorites(true)}
+                className={favorites.length > 0 ? 'bg-red-50 border-red-200' : ''}
+              >
+                <Heart className={`w-4 h-4 ${favorites.length > 0 ? 'fill-red-500 text-red-500' : ''}`} />
+                {favorites.length > 0 && (
+                  <Badge variant="secondary" className="ml-1 text-xs">
+                    {favorites.length}
+                  </Badge>
+                )}
+              </Button>
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'outline'}
                 size="sm"
